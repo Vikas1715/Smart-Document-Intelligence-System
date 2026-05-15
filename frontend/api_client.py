@@ -4,8 +4,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 class APIClient:
-    def __init__(self, base_url: str = "http://localhost:8000"):
-        self.base_url = base_url
+    def __init__(self, base_url: str = None):
+        # 1. Check if 'BACKEND_URL' is set in the cloud environment
+        # 2. If not (like on your local PC), default to localhost
+        if base_url is None:
+            base_url = os.getenv("BACKEND_URL", "http://localhost:8000")
+            
+        self.base_url = base_url.rstrip('/')  # Clean any trailing slashes
         self.session = requests.Session()
     
     def summarize(self, document_text: str, max_length: int = 500) -> str:
